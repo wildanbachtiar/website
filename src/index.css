@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+@layer base {
+  :root {
+    --motion-theme-duration: 700ms;
+    --motion-m3-emphasized: cubic-bezier(0.3, 0, 0, 1);
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+
+  html.dark {
+    --background: #131313;
+    --foreground: #e5e2e1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    margin: 0;
+  }
+}
+
+/* Material 3 Circular View Transition matching freehandtools-dashboard */
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+@keyframes dashboard-theme-circle-reveal {
+  0% {
+    clip-path: circle(0 at var(--dashboard-theme-origin-x) var(--dashboard-theme-origin-y));
+  }
+  100% {
+    clip-path: circle(var(--dashboard-theme-radius) at var(--dashboard-theme-origin-x) var(--dashboard-theme-origin-y));
+  }
+}
+
+[data-theme-transitioning="true"]::view-transition-old(root) {
+  mix-blend-mode: normal;
+  z-index: 0;
+  animation: none;
+}
+
+[data-theme-transitioning="true"]::view-transition-new(root) {
+  mix-blend-mode: normal;
+  z-index: 1;
+  animation: none;
+}
+
+[data-theme-animation-fallback="true"]::view-transition-new(root) {
+  animation: dashboard-theme-circle-reveal var(--motion-theme-duration) var(--motion-m3-emphasized) both;
+}
+
+@property --dashboard-theme-fallback-radius {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.dashboard-theme-reveal-fallback {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  --dashboard-theme-fallback-radius: 0px;
+  -webkit-mask-image: radial-gradient(
+    circle at var(--dashboard-theme-fallback-origin-x) var(--dashboard-theme-fallback-origin-y),
+    transparent 0,
+    transparent var(--dashboard-theme-fallback-radius),
+    #000 calc(var(--dashboard-theme-fallback-radius) + 1px)
+  );
+  mask-image: radial-gradient(
+    circle at var(--dashboard-theme-fallback-origin-x) var(--dashboard-theme-fallback-origin-y),
+    transparent 0,
+    transparent var(--dashboard-theme-fallback-radius),
+    #000 calc(var(--dashboard-theme-fallback-radius) + 1px)
+  );
+  transition: --dashboard-theme-fallback-radius var(--motion-theme-duration) var(--motion-m3-emphasized);
+  display: block;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.4);
+}
+
+/* Animated Gradient and Glow matching freehandtools-dashboard */
+@keyframes wildanShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes wildanGlow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.wildan-gradient-text {
+  background: linear-gradient(90deg, #4CA6F4, #61D898, #4CA6F4);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: wildanShift 4s ease infinite;
+}
+
+.wildan-gradient-glow {
+  background: linear-gradient(90deg, #4CA6F4, #61D898, #4CA6F4);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: wildanShift 4s ease infinite, wildanGlow 4s ease infinite;
+  filter: blur(5px);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Light mode adjustments */
+html:not(.dark) .wildan-gradient-glow {
+  mix-blend-mode: normal;
+  opacity: 0.25;
+  filter: blur(4px);
+}
